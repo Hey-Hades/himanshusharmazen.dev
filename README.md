@@ -100,7 +100,7 @@ Computer Engineering Undergraduate at IIIT Bhubaneswar with interests in:
 
 ## 🔗 Links
 
-- Portfolio: https://himanshusharmazen.dev
+- Portfolio: https://himanshusharmazen-dev.vercel.app
 - GitHub: https://github.com/Hey-Hades
 - LinkedIn: https://www.linkedin.com/in/himanshu-sharma-b98b62256
 
