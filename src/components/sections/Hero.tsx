@@ -43,7 +43,7 @@ export default function Hero() {
         alignItems: "center",
         justifyContent: "flex-end", // Keeps text on the right
         position: "relative",
-        overflow: "hidden",
+        // CHANGED: Removed overflow: "hidden" here
       }}
     >
       {/* HALFTONE PORTRAIT IMAGE */}
@@ -58,12 +58,11 @@ export default function Hero() {
         style={{
           position: "absolute",
           bottom: 0,
-          left: 0,
+          left: "0.5%",
           height: "90%",
           width: "55%",  
-          zIndex: 2,     
+          zIndex: -20, // CHANGED: Pushed backward behind the grid
           pointerEvents: "none", 
-          mixBlendMode: "screen", /* <--- MOVED TO THE WRAPPER */
         }}
         className="hidden md:block" 
       >
@@ -75,7 +74,7 @@ export default function Hero() {
             height: "100%",
             objectFit: "contain",
             objectPosition: "bottom left",
-            /* REMOVED FROM HERE */
+            // CHANGED: Removed mixBlendMode because it sits cleanly behind now
           }}
         />
       </motion.div>
@@ -179,7 +178,7 @@ export default function Hero() {
             }}
           >
             <TextType
-              text={["Computer Engineering Undergrad.", "Problem Solver.", "Algorithm Enthusiast."]}
+              text={["Computer Engineering Undergrad", "Optimizing algorithms", "Crafting digital experiences"]}
               typingSpeed={75}
               pauseDuration={1500}
               showCursor

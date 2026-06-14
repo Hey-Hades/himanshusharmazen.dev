@@ -67,7 +67,8 @@ export default function Home() {
     <main style={{ position: 'relative', overflow: 'hidden' }}>
       <AnimatedBackground />
 
-      <div style={{ position: 'relative', zIndex: 2 }}>
+      {/* CHANGED: Removed zIndex: 2 from this div so the image can go behind the background */}
+      <div style={{ position: 'relative' }}>
         <Navbar />
         <Hero />
         <About />
