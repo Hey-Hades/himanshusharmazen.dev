@@ -4,7 +4,7 @@ A modern full-stack developer portfolio built with Next.js, TypeScript, Tailwind
 
 Designed with a terminal-inspired cyber aesthetic, custom halftone portrait artwork, animated grid backgrounds, and smooth interactions to showcase projects, skills, certifications, and professional experience.
 
-![Portfolio Preview](./public/preview.png)
+<img width="2880" height="1620" alt="Screenshot (127)" src="https://github.com/user-attachments/assets/5e3bfa5f-347f-4b47-9e06-35dd9fe5bad2" />
 
 ## ✦ Features
 
