@@ -1,9 +1,8 @@
 import { createServerClient } from "@supabase/ssr";
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 
 export async function middleware(req: NextRequest) {
-  const res = NextResponse.next();
+  let res = NextResponse.next({ request: req });
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -14,6 +13,8 @@ export async function middleware(req: NextRequest) {
           return req.cookies.getAll();
         },
         setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value }) => req.cookies.set(name, value));
+          res = NextResponse.next({ request: req });
           cookiesToSet.forEach(({ name, value, options }) =>
             res.cookies.set(name, value, options)
           );
@@ -22,19 +23,18 @@ export async function middleware(req: NextRequest) {
     }
   );
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-
+  const { data: { user } } = await supabase.auth.getUser();
   const pathname = req.nextUrl.pathname;
 
-  // ✅ biarin login page lewat
+  if (pathname === "/admin") {
+    return NextResponse.redirect(new URL("/admin/dashboard", req.url));
+  }
+
   if (pathname === "/admin/login") {
     return res;
   }
 
-  // 🔒 protect admin page selain login
-  if (!session && pathname.startsWith("/admin")) {
+  if (!user && pathname.startsWith("/admin")) {
     return NextResponse.redirect(new URL("/admin/login", req.url));
   }
 
