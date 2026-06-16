@@ -1,8 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { type FormEvent, useState } from "react";
 import { supabase } from "@/lib/supabase";
-import { useRouter } from "next/navigation";
 import {
   Lock,
   Mail,
@@ -13,8 +12,6 @@ import {
 } from "lucide-react";
 
 export default function LoginPage() {
-  const router = useRouter();
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -24,7 +21,9 @@ export default function LoginPage() {
   const [errorMsg, setErrorMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
 
-  const handleLogin = async () => {
+  const handleLogin = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
     setErrorMsg("");
     setSuccessMsg("");
 
@@ -40,15 +39,22 @@ export default function LoginPage() {
       password,
     });
 
-    setLoading(false);
-
     if (error) {
+      setLoading(false);
       setErrorMsg("Invalid email or password");
     } else {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      if (!session) {
+        setLoading(false);
+        setErrorMsg("Login succeeded, but the session was not saved. Please try again.");
+        return;
+      }
+
       setSuccessMsg("Login success, redirecting...");
-      setTimeout(() => {
-        router.push("/admin/dashboard");
-      }, 800);
+      window.location.assign("/admin/dashboard");
     }
   };
 
@@ -60,7 +66,10 @@ export default function LoginPage() {
 
       {/* CARD */}
       <div className="relative z-10 w-full max-w-[420px]">
-        <div className="rounded-[32px] border border-white/10 bg-white/[0.03] backdrop-blur-xl p-7 sm:p-8 shadow-[0_0_60px_rgba(255,255,255,0.03)]">
+        <form
+          onSubmit={handleLogin}
+          className="rounded-[32px] border border-white/10 bg-white/[0.03] backdrop-blur-xl p-7 sm:p-8 shadow-[0_0_60px_rgba(255,255,255,0.03)]"
+        >
           {/* TOP */}
           <div className="flex flex-col items-center text-center mb-8">
             <div className="w-16 h-16 rounded-3xl bg-white/[0.06] border border-white/10 flex items-center justify-center mb-4">
@@ -152,7 +161,7 @@ export default function LoginPage() {
 
           {/* BUTTON */}
           <button
-            onClick={handleLogin}
+            type="submit"
             disabled={loading}
             className="w-full h-[56px] rounded-2xl bg-white text-black font-medium hover:scale-[1.01] active:scale-[0.99] transition flex items-center justify-center gap-2 disabled:opacity-60"
           >
@@ -168,7 +177,7 @@ export default function LoginPage() {
               "Login"
             )}
           </button>
-        </div>
+        </form>
       </div>
     </div>
   );
