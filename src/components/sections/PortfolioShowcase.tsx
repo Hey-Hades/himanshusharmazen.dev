@@ -351,14 +351,14 @@ export default function PortfolioShowcase() {
                           {/* GLOW */}
                           <div className="absolute w-[70px] h-[70px] rounded-full bg-white/20 blur-2xl opacity-0 group-hover:opacity-100 transition duration-500" />
 
-                          {/* CHANGED FROM logo_url TO icon_url HERE */}
-                          {item.icon_url ? (
-                            <img
-                              src={item.icon_url}
-                              alt={item.name}
-                              className="relative z-10 w-[56px] h-[56px] object-contain"
-                            />
-                          ) : (
+                          {/* CHANGED BACK TO logo_url TO MATCH DATABASE */}
+{item.logo_url ? (
+  <img
+    src={item.logo_url}
+    alt={item.name}
+    className="relative z-10 w-[56px] h-[56px] object-contain"
+  />
+) : (
                             <div className="relative z-10 w-[56px] h-[56px] rounded-2xl bg-white/10" />
                           )}
                         </div>
