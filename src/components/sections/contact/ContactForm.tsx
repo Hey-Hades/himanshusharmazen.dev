@@ -195,7 +195,7 @@ export default function ContactForm() {
         </motion.p>
 
         <motion.a
-          href="https://www.linkedin.com/in/himanshu-s-b98b62256"
+          href="https://www.linkedin.com/in/himanshu-sharma-b98b62256"
           target="_blank"
           rel="noopener noreferrer"
           variants={fieldVariants}
@@ -211,7 +211,7 @@ export default function ContactForm() {
             <FaLinkedinIn />
             <div>
               <p className="text-sm font-medium">LinkedIn</p>
-              <p className="text-xs text-white/35">himanshu-s-b98b62256</p>
+              <p className="text-xs text-white/35">himanshu-sharma-b98b62256</p>
             </div>
           </div>
           <div className="relative z-10 opacity-0 group-hover:opacity-100 transition">

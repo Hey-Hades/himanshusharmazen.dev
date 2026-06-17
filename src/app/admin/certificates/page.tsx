@@ -60,7 +60,7 @@ export default function CertificatesPage() {
     setImage(null);
     setPreview("");
     setEditId(null);
-    setCredentialUrl(""); // NEW
+    setCredentialUrl("");
   };
 
   const handleImage = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -118,14 +118,13 @@ export default function CertificatesPage() {
     setOpen(false);
     resetForm();
 
-    // FIXED TYPO HERE: Added parentheses to call the function
     fetchCertificates(); 
   };
 
   const handleDelete = async (id: number) => {
     const result = await Swal.fire({
       title: "Delete Certificate?",
-      text: "Certificate yang dihapus tidak bisa dikembalikan.",
+      text: "Deleted certificates cannot be recovered.",
       icon: "warning",
       showCancelButton: true,
       confirmButtonText: "Yes, Delete",
@@ -146,7 +145,7 @@ export default function CertificatesPage() {
 
       Swal.fire({
         title: "Deleted!",
-        text: "Certificate berhasil dihapus.",
+        text: "Certificate deleted successfully.",
         icon: "success",
         timer: 1800,
         showConfirmButton: false,
@@ -156,7 +155,7 @@ export default function CertificatesPage() {
     } else {
       Swal.fire({
         title: "Failed",
-        text: "Gagal menghapus certificate.",
+        text: "Failed to delete certificate.",
         icon: "error",
         background: "#111",
         color: "#fff",
@@ -314,13 +313,13 @@ export default function CertificatesPage() {
               onChange={(e) => setTitle(e.target.value)}
               className="w-full px-4 py-3 rounded-2xl bg-[#0f0f0f] border border-white/10 outline-none mb-5 text-sm"
             />
-            {/* ADD THIS NEW INPUT BOX */}
-<input
-  placeholder="Verification URL"
-  value={credentialUrl}
-  onChange={(e) => setCredentialUrl(e.target.value)}
-  className="w-full px-4 py-3 rounded-2xl bg-[#0f0f0f] border border-white/10 outline-none mb-5 text-sm"
-/>
+            {/* VERIFICATION URL */}
+            <input
+              placeholder="Verification URL"
+              value={credentialUrl}
+              onChange={(e) => setCredentialUrl(e.target.value)}
+              className="w-full px-4 py-3 rounded-2xl bg-[#0f0f0f] border border-white/10 outline-none mb-5 text-sm"
+            />
 
             {/* BUTTON */}
             <div className="flex flex-col sm:flex-row justify-end gap-3">

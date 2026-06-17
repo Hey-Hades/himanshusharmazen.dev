@@ -43,9 +43,9 @@ export default function PortfolioCard({
         delay: index * 0.06,
       }}
       whileHover={{ y: -4 }}
-      className="group relative rounded-[26px] border border-white/10 bg-white/5 p-4 backdrop-blur-xl flex flex-col min-h-[270px]"
+      className="group relative rounded-[26px] border border-white/10 bg-white/5 p-4 backdrop-blur-xl flex flex-col min-h-[320px]"
     >
-      <div className="w-full h-36 rounded-2xl overflow-hidden border border-white/10 bg-white/[0.03] mb-3">
+      <div className="w-full aspect-video rounded-2xl overflow-hidden border border-white/10 bg-white/[0.03] mb-3">
         {image ? (
           <img
             src={image}

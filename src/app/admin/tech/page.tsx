@@ -123,7 +123,7 @@ export default function TechStackPage() {
   const handleDelete = async (id: number) => {
     const result = await Swal.fire({
       title: "Delete Tech Stack?",
-      text: "Data yang dihapus tidak bisa dikembalikan.",
+      text: "Deleted data cannot be recovered.",
       icon: "warning",
       showCancelButton: true,
       confirmButtonText: "Yes, Delete",
@@ -149,7 +149,7 @@ export default function TechStackPage() {
 
       Swal.fire({
         title: "Deleted!",
-        text: "Tech stack berhasil dihapus.",
+        text: "Tech stack deleted successfully.",
         icon: "success",
         timer: 1800,
         showConfirmButton: false,
@@ -159,7 +159,7 @@ export default function TechStackPage() {
     } else {
       Swal.fire({
         title: "Failed",
-        text: "Gagal menghapus tech stack.",
+        text: "Failed to delete tech stack.",
         icon: "error",
         background: "#111",
         color: "#fff",

@@ -58,19 +58,19 @@ export default function AddProjectModal({
     e.preventDefault();
 
     if (!title.trim())
-      return showToast("Title wajib diisi");
+      return showToast("Title is required");
 
     if (!desc.trim())
-      return showToast("Description wajib diisi");
+      return showToast("Description is required");
 
     if (!tech.trim())
-      return showToast("Tech wajib diisi");
+      return showToast("Tech is required");
 
     if (!features.trim())
-      return showToast("Features wajib diisi");
+      return showToast("Features are required");
 
     if (images.length === 0)
-      return showToast("Upload minimal 1 gambar");
+      return showToast("Upload at least 1 image");
 
     setLoading(true);
 
@@ -112,7 +112,7 @@ export default function AddProjectModal({
         .single();
 
       if (error) {
-        showToast("Gagal simpan");
+        showToast("Failed to save");
         setLoading(false);
         return;
       }
@@ -130,7 +130,7 @@ export default function AddProjectModal({
 
       onClose();
     } catch {
-      showToast("Terjadi error");
+      showToast("An error occurred");
     }
 
     setLoading(false);

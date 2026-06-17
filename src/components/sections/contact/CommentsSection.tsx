@@ -4,7 +4,22 @@ import { useState } from 'react'
 import { motion, AnimatePresence, Variants } from 'framer-motion'
 import { Upload, Heart, Pin } from 'lucide-react'
 import useComments from '@/hooks/useComments'
-import { supabase } from '@/lib/supabase' // Moved below 'use client'
+import { supabase } from '@/lib/supabase'
+
+// 1. PLACE THE HELPER FUNCTION HERE (Outside the main component)
+const getSafeReplies = (repliesData: any) => {
+  if (typeof repliesData === "string") {
+    try {
+      return JSON.parse(repliesData);
+    } catch (e) {
+      return [];
+    }
+  }
+  if (Array.isArray(repliesData)) {
+    return repliesData;
+  }
+  return [];
+};
 
 const smoothEase: [number, number, number, number] = [0.22, 1, 0.36, 1]
 
@@ -59,37 +74,6 @@ export default function CommentsSection() {
     setPreview(null)
   }
 
-  // --- THE DIRECT WIRE TEST FUNCTION ---
-  const handleTestDatabase = async () => {
-    console.log("--- STARTING RAW DB TEST ---");
-    console.log("1. Checking Environment Variables...");
-    console.log("URL exists?", !!process.env.NEXT_PUBLIC_SUPABASE_URL);
-    console.log("Key exists?", !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
-    
-    try {
-      console.log("2. Attempting to insert test comment directly...");
-      const { data, error } = await supabase
-        .schema('public')
-        .from('comments')
-        .insert([{ 
-          name: 'Direct Test User', 
-          comment: 'This bypassed the hooks!', 
-          likes: 0, 
-          is_pinned: false,
-          replies: []
-        }])
-        .select();
-
-      if (error) {
-        console.error("❌ SUPABASE REJECTED IT:", JSON.stringify(error, null, 2));
-      } else {
-        console.log("✅ SUCCESS! Data saved:", data);
-      }
-    } catch (err) {
-      console.error("❌ CRITICAL CRASH:", err);
-    }
-  };
-
   return (
     <motion.div
       initial={{ opacity: 0, x: 40 }}
@@ -102,9 +86,6 @@ export default function CommentsSection() {
         <h3 className="text-xl md:text-2xl font-semibold mb-1">Comments</h3>
         <p className="text-xs md:text-sm text-white/40">Leave your thoughts here</p>
       </div>
-
-      {/* TEST BUTTON (Remove this after we fix the issue) */}
-      
 
       <div className="space-y-3 md:space-y-4 mb-5 md:mb-6">
         <input
@@ -150,15 +131,59 @@ export default function CommentsSection() {
       </div>
 
       <div className="rounded-[24px] border border-white/10 bg-black/20 p-3 h-[320px] overflow-y-auto">
-        {comments.map((item, i) => (
-          <div key={item.id || i} className="p-3 border-b border-white/10 mb-2 rounded-xl bg-white/5">
-            <p className="text-sm font-medium">{item.name}</p>
-            <p className="text-xs text-white/70 mt-1">{item.comment}</p>
-            <button onClick={() => likeComment(item.id, item.likes)} className="flex items-center gap-1 mt-2 text-xs text-white/40 hover:text-red-400 transition-colors">
-              <Heart size={13} /> {item.likes || 0}
-            </button>
-          </div>
-        ))}
+        {/* 2. CHANGE THE MAP FUNCTION TO RENDER REPLIES */}
+        {comments.map((item, i) => {
+          const safeReplies = getSafeReplies(item.replies);
+
+          return (
+            <div key={item.id || i} className="p-4 border-b border-white/10 mb-2 rounded-2xl bg-white/5">
+              
+              {/* Main Comment */}
+              <div className="flex justify-between items-start">
+                <div>
+                  <p className="text-sm font-medium text-white/90">{item.name}</p>
+                  {item.is_pinned && (
+                    <span className="text-[9px] px-2 py-0.5 mt-1 inline-block rounded-full bg-yellow-500/15 text-yellow-300 border border-yellow-500/20">
+                      PINNED
+                    </span>
+                  )}
+                </div>
+                {item.liked_by_admin && (
+                  <Heart size={14} className="text-pink-400" fill="currentColor" />
+                )}
+              </div>
+              
+              <p className="text-xs text-white/70 mt-2">{item.comment}</p>
+              
+              {/* Display Image if they uploaded one */}
+              {item.image_url && (
+                <img src={item.image_url} alt="Attached" className="mt-3 w-full max-h-32 object-cover rounded-xl border border-white/10" />
+              )}
+
+              <button onClick={() => likeComment(item.id, item.likes)} className="flex items-center gap-1 mt-3 text-xs text-white/40 hover:text-red-400 transition-colors">
+                <Heart size={13} /> {item.likes || 0}
+              </button>
+
+              {/* Display Replies safely */}
+              {safeReplies.length > 0 && (
+                <div className="mt-3 pl-3 border-l-2 border-white/10 space-y-2">
+                  {safeReplies.map((reply: any, idx: number) => (
+                    <div key={idx} className="bg-black/20 rounded-xl p-3 border border-white/5">
+                      <div className="flex justify-between items-center mb-1">
+                        <span className="text-[11px] font-bold text-white/90">{reply.username}</span>
+                        <span className="text-[9px] text-white/30">
+                          {new Date(reply.created_at).toLocaleDateString()}
+                        </span>
+                      </div>
+                      <p className="text-xs text-white/60">{reply.message}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+            </div>
+          )
+        })}
       </div>
     </motion.div>
   )

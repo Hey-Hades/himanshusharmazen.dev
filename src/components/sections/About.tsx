@@ -363,6 +363,7 @@ export default function About() {
               key={i}
               variants={pop}
               whileHover={{ scale: 1.03 }}
+              onClick={scrollToPortfolio} // <--- Added onClick here so the whole card is clickable
               style={{
                 position: "relative",
                 padding: 18,
@@ -409,12 +410,10 @@ export default function About() {
               </div>
 
               <div
-                onClick={scrollToPortfolio}
                 style={{
                   position: "absolute",
                   bottom: 14,
                   right: 14,
-                  cursor: "pointer",
                 }}
               >
                 <ArrowUpRight size={15} />

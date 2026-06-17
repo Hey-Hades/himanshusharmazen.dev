@@ -153,7 +153,7 @@ export default function PortfolioShowcase() {
                       ease: smoothEase,
                     },
                   }}
-                  className="grid md:grid-cols-2 xl:grid-cols-3 gap-6 px-1"
+                  className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 px-1"
                 >
                   <AnimatePresence mode="popLayout">
                     {!loading &&
@@ -273,51 +273,50 @@ export default function PortfolioShowcase() {
             )}
 
             {/* CERTIFICATES */}
-{activeTab === 'certificates' && (
-  <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6 px-1">
-    {!loading &&
-      certificates.map((item, i) => (
-        <motion.div
-          key={item.id}
-          /* ... all your existing motion props ... */
-          className="group cursor-pointer rounded-[26px] border border-white/10 bg-white/5 p-4 backdrop-blur-xl flex flex-col items-center"
-        >
-          {/* IMAGE */}
-          <div 
-            onClick={() => {
-              setPreviewImage(item.image_url);
-              setPreviewOpen(true);
-            }}
-            className="w-full rounded-2xl overflow-hidden border border-white/10 h-56"
-          >
-            <img
-              src={item.image_url}
-              className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
-            />
-          </div>
+            {activeTab === 'certificates' && (
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 px-1">
+                {!loading &&
+                  certificates.map((item, i) => (
+                    <motion.div
+                      key={item.id}
+                      className="group cursor-pointer rounded-[26px] border border-white/10 bg-white/5 p-4 backdrop-blur-xl flex flex-col items-center"
+                    >
+                      {/* IMAGE */}
+                      <div 
+                        onClick={() => {
+                          setPreviewImage(item.image_url);
+                          setPreviewOpen(true);
+                        }}
+                        className="w-full rounded-2xl overflow-hidden border border-white/10 h-56"
+                      >
+                        <img
+                          src={item.image_url}
+                          className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                        />
+                      </div>
 
-          {/* TITLE */}
-          <h3 className="mt-4 text-[15px] font-semibold text-center text-white/90">
-            {item.title}
-          </h3>
+                      {/* TITLE */}
+                      <h3 className="mt-4 text-[15px] font-semibold text-center text-white/90">
+                        {item.title}
+                      </h3>
 
-          {/* VERIFY BUTTON */}
-          {item.credential_url && (
-            <a 
-              href={item.credential_url} 
-              target="_blank" 
-              rel="noopener noreferrer"
-              onClick={(e) => e.stopPropagation()} // <--- THIS LINE IS CRITICAL
-              className="mt-3 inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/10 bg-white/[0.03] text-[11px] text-white/70 hover:bg-white/10 hover:text-white hover:border-white/20 transition-all duration-300"
-            >
-              Verify Credential
-            </a>
-          )}
-          
-        </motion.div>
-      ))}
-  </div>
-)}
+                      {/* VERIFY BUTTON */}
+                      {item.credential_url && (
+                        <a 
+                          href={item.credential_url} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()} 
+                          className="mt-3 inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/10 bg-white/[0.03] text-[11px] text-white/70 hover:bg-white/10 hover:text-white hover:border-white/20 transition-all duration-300"
+                        >
+                          Verify Credential
+                        </a>
+                      )}
+                      
+                    </motion.div>
+                  ))}
+              </div>
+            )}
 
             {/* TECH STACK */}
             {activeTab === 'techstack' && (
@@ -351,14 +350,13 @@ export default function PortfolioShowcase() {
                           {/* GLOW */}
                           <div className="absolute w-[70px] h-[70px] rounded-full bg-white/20 blur-2xl opacity-0 group-hover:opacity-100 transition duration-500" />
 
-                          {/* CHANGED BACK TO logo_url TO MATCH DATABASE */}
-{item.logo_url ? (
-  <img
-    src={item.logo_url}
-    alt={item.name}
-    className="relative z-10 w-[56px] h-[56px] object-contain"
-  />
-) : (
+                          {item.logo_url ? (
+                            <img
+                              src={item.logo_url}
+                              alt={item.name}
+                              className="relative z-10 w-[56px] h-[56px] object-contain"
+                            />
+                          ) : (
                             <div className="relative z-10 w-[56px] h-[56px] rounded-2xl bg-white/10" />
                           )}
                         </div>

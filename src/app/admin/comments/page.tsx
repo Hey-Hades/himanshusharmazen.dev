@@ -13,6 +13,21 @@ import {
   Send,
 } from "lucide-react";
 
+// HELPER: Safely parse replies to fix the double stringification bug
+const getSafeReplies = (repliesData: any) => {
+  if (typeof repliesData === "string") {
+    try {
+      return JSON.parse(repliesData);
+    } catch (e) {
+      return [];
+    }
+  }
+  if (Array.isArray(repliesData)) {
+    return repliesData;
+  }
+  return [];
+};
+
 export default function AdminCommentsPage() {
   const [comments, setComments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -142,7 +157,8 @@ export default function AdminCommentsPage() {
 
     const target = comments.find((x) => x.id === commentId);
 
-    const oldReplies = target?.replies || [];
+    // Safely parse old replies
+    const safeReplies = getSafeReplies(target?.replies);
 
     const newReply = {
       username: "Admin",
@@ -150,14 +166,27 @@ export default function AdminCommentsPage() {
       created_at: new Date().toISOString(),
     };
 
-    const updatedReplies = [...oldReplies, newReply];
+    // Append new reply
+    const updatedReplies = [...safeReplies, newReply];
 
-    await supabase
+    // Save directly without JSON.stringify
+    const { error } = await supabase
       .from("comments")
       .update({
         replies: updatedReplies,
       })
       .eq("id", commentId);
+
+    if (error) {
+      Swal.fire({
+        title: "Error",
+        text: "Failed to send reply",
+        icon: "error",
+        background: "#0f0f0f",
+        color: "#fff",
+      });
+      return;
+    }
 
     setComments((prev) =>
       prev.map((item) =>
@@ -213,126 +242,144 @@ export default function AdminCommentsPage() {
                 No comments yet
               </div>
             ) : (
-              comments.map((comment) => (
-                <div
-                  key={comment.id}
-                  className="rounded-3xl border border-white/10 bg-white/[0.03] p-4 sm:p-5 hover:border-white/20 transition"
-                >
-                  <div className="flex flex-col gap-5">
-                    {/* TOP */}
-                    <div className="flex flex-col xl:flex-row gap-5">
-                      {/* LEFT */}
-                      <div className="flex-1 min-w-0">
-                        <div className="flex flex-wrap items-center gap-2 mb-3">
-                          <p className="font-medium text-[14px] break-all">
-                            {comment.name || comment.username}
+              comments.map((comment) => {
+                // Parse replies safely for rendering in the Admin Panel
+                const safeReplies = getSafeReplies(comment.replies);
+
+                return (
+                  <div
+                    key={comment.id}
+                    className="rounded-3xl border border-white/10 bg-white/[0.03] p-4 sm:p-5 hover:border-white/20 transition"
+                  >
+                    <div className="flex flex-col gap-5">
+                      {/* TOP */}
+                      <div className="flex flex-col xl:flex-row gap-5">
+                        {/* LEFT */}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex flex-wrap items-center gap-2 mb-3">
+                            <p className="font-medium text-[14px] break-all">
+                              {comment.name || comment.username}
+                            </p>
+
+                            {comment.is_pinned && (
+                              <span className="text-[9px] px-2 py-[3px] rounded-full bg-yellow-500/15 text-yellow-300 border border-yellow-500/20">
+                                PINNED
+                              </span>
+                            )}
+
+                            {comment.liked_by_admin && (
+                              <span className="text-[9px] px-2 py-[3px] rounded-full bg-pink-500/15 text-pink-300 border border-pink-500/20">
+                                LIKED
+                              </span>
+                            )}
+                          </div>
+
+                          <p className="text-[13px] text-white/60 leading-6 mb-3 break-words">
+                            {comment.comment}
                           </p>
 
-                          {comment.is_pinned && (
-                            <span className="text-[9px] px-2 py-[3px] rounded-full bg-yellow-500/15 text-yellow-300 border border-yellow-500/20">
-                              PINNED
-                            </span>
+                          {comment.image_url && (
+                            <img
+                              src={comment.image_url}
+                              className="rounded-2xl border border-white/10 w-full max-w-full sm:max-w-[260px] object-cover mb-4"
+                            />
                           )}
 
-                          {comment.liked_by_admin && (
-                            <span className="text-[9px] px-2 py-[3px] rounded-full bg-pink-500/15 text-pink-300 border border-pink-500/20">
-                              LIKED
+                          <div className="flex flex-wrap items-center gap-3 text-[11px] text-white/35">
+                            <span>{comment.likes || 0} likes</span>
+
+                            <span>
+                              {new Date(comment.created_at).toLocaleDateString()}
                             </span>
+                          </div>
+
+                          {/* RENDER EXISTING REPLIES (if any) */}
+                          {safeReplies.length > 0 && (
+                            <div className="mt-4 pl-4 border-l-2 border-white/10 space-y-3">
+                              {safeReplies.map((reply: any, idx: number) => (
+                                <div key={idx} className="bg-white/5 p-3 rounded-xl">
+                                  <h4 className="text-[12px] font-bold text-white/80">{reply.username}</h4>
+                                  <p className="text-[13px] text-white/60 mt-1">{reply.message}</p>
+                                  <span className="text-[10px] text-white/30">{new Date(reply.created_at).toLocaleDateString()}</span>
+                                </div>
+                              ))}
+                            </div>
                           )}
                         </div>
 
-                        <p className="text-[13px] text-white/60 leading-6 mb-3 break-words">
-                          {comment.comment}
-                        </p>
-
-                        {comment.image_url && (
-                          <img
-                            src={comment.image_url}
-                            className="rounded-2xl border border-white/10 w-full max-w-full sm:max-w-[260px] object-cover mb-4"
-                          />
-                        )}
-
-                        <div className="flex flex-wrap items-center gap-3 text-[11px] text-white/35">
-                          <span>{comment.likes || 0} likes</span>
-
-                          <span>
-                            {new Date(comment.created_at).toLocaleDateString()}
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* ACTION */}
-                      <div className="flex xl:flex-col flex-row gap-2 shrink-0">
-                        <button
-                          onClick={() =>
-                            addLike(
-                              comment.id,
-                              comment.likes,
-                              comment.liked_by_admin,
-                            )
-                          }
-                          className={`w-11 h-11 rounded-2xl border flex items-center justify-center transition ${
-                            comment.liked_by_admin
-                              ? "bg-pink-500/20 border-pink-500/30 text-pink-300"
-                              : "bg-white/5 border-white/10 hover:bg-white/10"
-                          }`}
-                        >
-                          <Heart
-                            size={15}
-                            fill={
-                              comment.liked_by_admin ? "currentColor" : "none"
+                        {/* ACTION */}
+                        <div className="flex xl:flex-col flex-row gap-2 shrink-0">
+                          <button
+                            onClick={() =>
+                              addLike(
+                                comment.id,
+                                comment.likes,
+                                comment.liked_by_admin,
+                              )
                             }
-                          />
-                        </button>
+                            className={`w-11 h-11 rounded-2xl border flex items-center justify-center transition ${
+                              comment.liked_by_admin
+                                ? "bg-pink-500/20 border-pink-500/30 text-pink-300"
+                                : "bg-white/5 border-white/10 hover:bg-white/10"
+                            }`}
+                          >
+                            <Heart
+                              size={15}
+                              fill={
+                                comment.liked_by_admin ? "currentColor" : "none"
+                              }
+                            />
+                          </button>
 
-                        <button
-                          onClick={() =>
-                            togglePin(comment.id, comment.is_pinned)
-                          }
-                          className={`w-11 h-11 rounded-2xl border flex items-center justify-center transition ${
-                            comment.is_pinned
-                              ? "bg-yellow-500/20 border-yellow-500/30 text-yellow-300"
-                              : "bg-white/5 border-white/10 hover:bg-white/10"
-                          }`}
-                        >
-                          <Pin size={15} />
-                        </button>
+                          <button
+                            onClick={() =>
+                              togglePin(comment.id, comment.is_pinned)
+                            }
+                            className={`w-11 h-11 rounded-2xl border flex items-center justify-center transition ${
+                              comment.is_pinned
+                                ? "bg-yellow-500/20 border-yellow-500/30 text-yellow-300"
+                                : "bg-white/5 border-white/10 hover:bg-white/10"
+                            }`}
+                          >
+                            <Pin size={15} />
+                          </button>
 
-                        <button
-                          onClick={() => deleteComment(comment.id)}
-                          className="w-11 h-11 rounded-2xl bg-red-500/10 border border-red-500/20 hover:bg-red-500/20 transition flex items-center justify-center text-red-300"
-                        >
-                          <Trash2 size={15} />
-                        </button>
+                          <button
+                            onClick={() => deleteComment(comment.id)}
+                            className="w-11 h-11 rounded-2xl bg-red-500/10 border border-red-500/20 hover:bg-red-500/20 transition flex items-center justify-center text-red-300"
+                          >
+                            <Trash2 size={15} />
+                          </button>
+                        </div>
                       </div>
-                    </div>
 
-                    {/* REPLY */}
-                    <div className="border-t border-white/5 pt-4">
-                      <div className="flex items-center gap-2">
-                        <input
-                          value={replyText[comment.id] || ""}
-                          onChange={(e) =>
-                            setReplyText((prev) => ({
-                              ...prev,
-                              [comment.id]: e.target.value,
-                            }))
-                          }
-                          placeholder="Reply..."
-                          className="flex-1 h-11 px-4 rounded-2xl bg-black/20 border border-white/10 outline-none text-sm"
-                        />
+                      {/* REPLY */}
+                      <div className="border-t border-white/5 pt-4">
+                        <div className="flex items-center gap-2">
+                          <input
+                            value={replyText[comment.id] || ""}
+                            onChange={(e) =>
+                              setReplyText((prev) => ({
+                                ...prev,
+                                [comment.id]: e.target.value,
+                              }))
+                            }
+                            placeholder="Reply..."
+                            className="flex-1 h-11 px-4 rounded-2xl bg-black/20 border border-white/10 outline-none text-sm"
+                          />
 
-                        <button
-                          onClick={() => sendReply(comment.id)}
-                          className="h-11 min-w-[54px] px-4 rounded-2xl bg-white text-black hover:opacity-90 transition flex items-center justify-center"
-                        >
-                          <Send size={15} />
-                        </button>
+                          <button
+                            onClick={() => sendReply(comment.id)}
+                            className="h-11 min-w-[54px] px-4 rounded-2xl bg-white text-black hover:opacity-90 transition flex items-center justify-center"
+                          >
+                            <Send size={15} />
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))
+                );
+              })
             )}
           </div>
         </div>

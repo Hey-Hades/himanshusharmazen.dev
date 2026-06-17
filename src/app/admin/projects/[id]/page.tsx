@@ -45,12 +45,12 @@ export default function ProjectDetailPage() {
 
   const handleDelete = async () => {
   const result = await Swal.fire({
-    title: "Hapus project?",
-    text: "Project yang dihapus tidak bisa dikembalikan.",
+    title: "Delete project?",
+    text: "Deleted projects cannot be recovered.",
     icon: "warning",
     showCancelButton: true,
-    confirmButtonText: "Ya, Hapus",
-    cancelButtonText: "Batal",
+    confirmButtonText: "Yes, Delete",
+    cancelButtonText: "Cancel",
     background: "#101010",
     color: "#fff",
     confirmButtonColor: "#ef4444",
@@ -64,8 +64,8 @@ export default function ProjectDetailPage() {
 
   if (!error) {
     await Swal.fire({
-      title: "Berhasil!",
-      text: "Project berhasil dihapus.",
+      title: "Success!",
+      text: "Project deleted successfully.",
       icon: "success",
       timer: 1800,
       showConfirmButton: false,
@@ -76,8 +76,8 @@ export default function ProjectDetailPage() {
     router.push("/admin/projects");
   } else {
     Swal.fire({
-      title: "Gagal",
-      text: "Project gagal dihapus.",
+      title: "Failed",
+      text: "Failed to delete project.",
       icon: "error",
       background: "#101010",
       color: "#fff",
@@ -96,8 +96,8 @@ export default function ProjectDetailPage() {
     setEditMode(false);
 
     Swal.fire({
-      title: "Berhasil",
-      text: "Project berhasil diperbarui.",
+      title: "Success",
+      text: "Project updated successfully.",
       icon: "success",
       timer: 1800,
       showConfirmButton: false,
@@ -106,8 +106,8 @@ export default function ProjectDetailPage() {
     });
   } else {
     Swal.fire({
-      title: "Gagal",
-      text: "Update project gagal.",
+      title: "Failed",
+      text: "Failed to update project.",
       icon: "error",
       background: "#101010",
       color: "#fff",
