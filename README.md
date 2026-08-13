@@ -35,7 +35,7 @@ Designed with a terminal-inspired cyber aesthetic, custom halftone portrait artw
 
 * Vercel
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Clone the repository
 
@@ -69,7 +69,7 @@ Open:
 
 http://localhost:3000
 
-## 👨‍💻 About Me
+## About Me
 
 **Himanshu Sharma**
 
@@ -93,12 +93,12 @@ Computer Engineering Undergraduate at IIIT Bhubaneswar with interests in:
 * SQL
 * Supabase
 
-## 📜 Certifications
+## Certifications
 
 * Oracle Cloud Infrastructure (OCI) Generative AI Professional
 * Oracle Cloud Infrastructure Architect Associate
 
-## 🔗 Links
+## Links
 
 - Portfolio: https://himanshusharmazen-dev.vercel.app
 - GitHub: https://github.com/Hey-Hades
